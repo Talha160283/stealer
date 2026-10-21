@@ -9,3 +9,5 @@ services:
         sync: false
       - key: MONGO_URI
         sync: false
+      - key: MAIN_OWNER_ID
+        sync: false
