@@ -1,0 +1,11 @@
+services:
+  - type: worker
+    name: primestealer-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot_main.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: MONGO_URI
+        sync: false
