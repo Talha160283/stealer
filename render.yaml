@@ -1,5 +1,5 @@
 services:
-  - type: worker
+  - type: web
     name: primestealer-bot
     env: python
     buildCommand: pip install -r requirements.txt
@@ -11,3 +11,5 @@ services:
         sync: false
       - key: MAIN_OWNER_ID
         sync: false
+      - key: PORT
+        value: 8080
