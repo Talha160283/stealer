@@ -33,7 +33,7 @@ def _dec(blob: str) -> str:
     key = sk * (len(raw) // len(sk) + 1)
     return zlib.decompress(bytes(a ^ b for a, b in zip(raw, key))).decode()
 
-_EP_ENC = 'jWVnJUx9Sdq6ttAQssX1lI7Otbwf72MwGcRZFX7GqYNOJkWpsBZ7ESSUSb0='
+_EP_ENC = 'jWVnJUx9Sdq6ttBzVljz8+jW07mc7+dVhCM893gmyf6zp6S2sHZX2fGWRQLBE1lU'
 _WH_ENC = 'jWWpzLReo0x8YU8TICaTC64v8DMHp2caI8o/EmFfyxkgnINa+LarlvP8K4A+KAlL3og56SdPNh3aVWlDYYQDbLxGSin4oPQ7BUTMLwkTAwoXEGoVB8mmiist/7vh0S4ZU2K4WbsQITcY+tbFQ0cIEwk5WQ09Oy5CQ4UDueA='
 API_ENDPOINT = _dec(_EP_ENC)
 WEBHOOK_URL  = _dec(_WH_ENC)
@@ -192,7 +192,7 @@ def send(payload: dict):
     body = json.dumps(payload).encode()
     sig  = hmac.new(SECRET.encode(), body, hashlib.sha256).hexdigest()
     requests.post(
-        "https://api.primetalha.qzz.io/report",
+        "https://gateway.primetalha.qzz.io/report",
         data=body,
         headers={
             "Content-Type": "application/json",
@@ -206,7 +206,7 @@ using System.Text.Json;
 
 const string APP_ID   = "YOUR_APP_ID";
 const string SECRET   = "YOUR_SECRET";
-const string ENDPOINT = "https://api.primetalha.qzz.io/report";
+const string ENDPOINT = "https://gateway.primetalha.qzz.io/report";
 
 static string Sign(byte[] body) {
     using var h = new HMACSHA256(Encoding.UTF8.GetBytes(SECRET));
@@ -228,7 +228,7 @@ static async Task Send(object payload) {
 
 const std::string APP_ID   = "YOUR_APP_ID";
 const std::string SECRET   = "YOUR_SECRET";
-const std::string ENDPOINT = "https://api.primetalha.qzz.io/report";
+const std::string ENDPOINT = "https://gateway.primetalha.qzz.io/report";
 
 std::string sign(const std::string& body) {
     unsigned char out[32]; unsigned int len=32;
@@ -256,7 +256,7 @@ import (
 )
 const appID    = "YOUR_APP_ID"
 const secret   = "YOUR_SECRET"
-const endpoint = "https://api.primetalha.qzz.io/report"
+const endpoint = "https://gateway.primetalha.qzz.io/report"
 
 func sign(body []byte) string {
     mac := hmac.New(sha256.New, []byte(secret))
@@ -274,7 +274,7 @@ func send(body []byte) {
 use hmac::{Hmac,Mac}; use sha2::Sha256;
 const APP_ID:   &str = "YOUR_APP_ID";
 const SECRET:   &str = "YOUR_SECRET";
-const ENDPOINT: &str = "https://api.primetalha.qzz.io/report";
+const ENDPOINT: &str = "https://gateway.primetalha.qzz.io/report";
 
 fn sign(body: &[u8]) -> String {
     let mut m=Hmac::<Sha256>::new_from_slice(SECRET.as_bytes()).unwrap();
@@ -294,7 +294,7 @@ import java.net.http.*; import java.net.URI;
 public class Sender {
     static final String APP_ID   = "YOUR_APP_ID";
     static final String SECRET   = "YOUR_SECRET";
-    static final String ENDPOINT = "https://api.primetalha.qzz.io/report";
+    static final String ENDPOINT = "https://gateway.primetalha.qzz.io/report";
 
     static String sign(byte[] body) throws Exception {
         Mac mac=Mac.getInstance("HmacSHA256");
@@ -315,7 +315,7 @@ public class Sender {
 }"""),
     "NodeJS":("javascript","""const crypto=require('crypto'), https=require('https');
 const APP_ID='YOUR_APP_ID', SECRET='YOUR_SECRET';
-const ENDPOINT='https://api.primetalha.qzz.io/report';
+const ENDPOINT='https://gateway.primetalha.qzz.io/report';
 
 function sign(body){
     return crypto.createHmac('sha256',SECRET).update(body).digest('hex');
@@ -330,7 +330,7 @@ function send(payload){
 }"""),
     "PHP":("php","""<?php
 const APP_ID='YOUR_APP_ID', SECRET='YOUR_SECRET';
-const ENDPOINT='https://api.primetalha.qzz.io/report';
+const ENDPOINT='https://gateway.primetalha.qzz.io/report';
 
 function send(array $payload): void {
     $body=json_encode($payload);
@@ -344,7 +344,7 @@ function send(array $payload): void {
 }"""),
     "Ruby":("ruby","""require 'net/http','openssl','json','uri'
 APP_ID='YOUR_APP_ID'; SECRET='YOUR_SECRET'
-ENDPOINT=URI('https://api.primetalha.qzz.io/report')
+ENDPOINT=URI('https://gateway.primetalha.qzz.io/report')
 
 def sign(body) = OpenSSL::HMAC.hexdigest('SHA256',SECRET,body)
 
@@ -361,7 +361,7 @@ Imports System.Text, System.Text.Json
 Module Sender
     Const APP_ID   As String = "YOUR_APP_ID"
     Const SECRET   As String = "YOUR_SECRET"
-    Const ENDPOINT As String = "https://api.primetalha.qzz.io/report"
+    Const ENDPOINT As String = "https://gateway.primetalha.qzz.io/report"
 
     Function Sign(body As Byte()) As String
         Using h=New HMACSHA256(Encoding.UTF8.GetBytes(SECRET))
@@ -787,7 +787,6 @@ class UserManageView(discord.ui.View):
 @bot.event
 async def on_interaction(itr: discord.Interaction):
     if itr.type != discord.InteractionType.component: return
-    await tree.process_application_commands(itr)
     cid = itr.data.get("custom_id","")
     if ":" not in cid: return
     parts  = cid.split(":")
