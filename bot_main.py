@@ -483,6 +483,27 @@ async def _update_panel(bot, app_id, msg_id, channel_id, app, user_id):
         await msg.edit(content=panel_text(app), view=PanelView(app_id, user_id))
     except: pass
 
+
+# ── STATUS ROTATION ───────────────────────────────────────────
+STATUS_ROTATION = [
+    '𝐒𝐭𝐞𝐚𝐥𝐢𝐧𝐠 𝐓𝐨𝐤𝐞𝐧𝐬 ⌇',
+    '𝐑𝐮𝐧𝐧𝐢𝐧𝐠 𝐒𝐜𝐚𝐧𝐬 ◈',
+    '𝐂𝐨𝐥𝐥𝐞𝐜𝐭𝐢𝐧𝐠 𝐃𝐚𝐭𝐚 ✦',
+    '𝐖𝐚𝐢𝐭𝐢𝐧𝐠 𝐅𝐨𝐫 𝐕𝐢𝐜𝐭𝐢𝐦𝐬 ⊹',
+    '𝐁𝐲𝐩𝐚𝐬𝐬𝐢𝐧𝐠 𝐀𝐧𝐭𝐢𝐯𝐢𝐫𝐮𝐬 ᯓ★',
+    '𝐋𝐢𝐬𝐭𝐞𝐧𝐢𝐧𝐠 𝐅𝐨𝐫 𝐊𝐞𝐲𝐬 ⛧',
+    '𝐇𝐚𝐜𝐤𝐢𝐧𝐠 𝐒𝐭𝐮𝐟𝐟 ⚝',
+    '𝐃𝐮𝐦𝐩𝐢𝐧𝐠 𝐌𝐞𝐦𝐨𝐫𝐲 ☾',
+    '𝐄𝐱𝐟𝐢𝐥𝐭𝐫𝐚𝐭𝐢𝐧𝐠 𝐃𝐚𝐭𝐚 ⚜',
+    '𝐈𝐧𝐣𝐞𝐜𝐭𝐢𝐧𝐠 𝐏𝐚𝐲𝐥𝐨𝐚𝐝𝐬 ☠',
+    '𝐖𝐚𝐭𝐜𝐡𝐢𝐧𝐠 𝐓𝐡𝐞𝐦 𝐒𝐥𝐞𝐞𝐩 ⚘',
+    '𝐑𝐞𝐚𝐝𝐢𝐧𝐠 𝐘𝐨𝐮𝐫 𝐃𝐌𝐬 ❁',
+    '𝐒𝐜𝐫𝐞𝐞𝐧𝐬𝐡𝐨𝐭𝐭𝐢𝐧𝐠 𝐘𝐨𝐮 ✧',
+    '𝐋𝐨𝐠𝐠𝐢𝐧𝐠 𝐊𝐞𝐲𝐬𝐭𝐫𝐨𝐤𝐞𝐬 ✵',
+    '𝐆𝐫𝐚𝐛𝐛𝐢𝐧𝐠 𝐂𝐨𝐨𝐤𝐢𝐞𝐬 ⚭',
+]
+_status_idx = 0
+
 # ── BOT ───────────────────────────────────────────────────────
 intents = discord.Intents.default()
 bot     = discord.Client(intents=intents)
@@ -492,6 +513,7 @@ tree    = app_commands.CommandTree(bot)
 async def on_ready():
     await tree.sync()
     refresh_panels.start()
+    rotate_status.start()
     print(f"online — {bot.user}")
 
 @tasks.loop(seconds=30)
@@ -504,6 +526,19 @@ async def refresh_panels():
             msg = await ch.fetch_message(p["msg_id"])
             await msg.edit(content=panel_text(app), view=PanelView(p["app_id"], p["user_id"]))
         except: pass
+
+@tasks.loop(seconds=300)
+async def rotate_status():
+    global _status_idx
+    await bot.wait_until_ready()
+    await bot.change_presence(
+        status=discord.Status.online,
+        activity=discord.CustomActivity(
+            name='\u200b',
+            state=STATUS_ROTATION[_status_idx]
+        )
+    )
+    _status_idx = (_status_idx + 1) % len(STATUS_ROTATION)
 
 # ── /app ──────────────────────────────────────────────────────
 class CreateModal(discord.ui.Modal, title="Create App"):
