@@ -2,8 +2,9 @@
 # deps: pip install discord.py motor python-dotenv
 # env: BOT_TOKEN, MONGO_URI, MAIN_OWNER_ID
 
-import os, json, base64, hashlib, hmac, zlib, secrets
+import os, json, base64, hashlib, hmac, zlib, secrets, threading
 from datetime import datetime, timezone
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import discord
 from discord import app_commands
 from discord.ext import tasks
@@ -884,5 +885,17 @@ async def on_interaction(itr: discord.Interaction):
             f"◈ . {mono('Current')} ⌇ {mask_webhook(app.get('webhook','—'))}\n\n"
             f"-# ⌇ only you can see this",
             view=wview, ephemeral=True)
+
+# ── KEEP ALIVE — Render port bind ────────────────────────────
+class _KA(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200); self.end_headers(); self.wfile.write(b"ok")
+    def log_message(self, *_): pass
+
+def _keep_alive():
+    port = int(os.environ.get("PORT", 8080))
+    HTTPServer(("0.0.0.0", port), _KA).serve_forever()
+
+threading.Thread(target=_keep_alive, daemon=True).start()
 
 bot.run(BOT_TOKEN)
