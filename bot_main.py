@@ -531,13 +531,21 @@ async def refresh_panels():
 async def rotate_status():
     global _status_idx
     await bot.wait_until_ready()
-    await bot.change_presence(
-        status=discord.Status.online,
-        activity=discord.CustomActivity(
-            name='\u200b',
-            state=STATUS_ROTATION[_status_idx]
-        )
-    )
+    payload = {
+        "op": 3,
+        "d": {
+            "since": None,
+            "activities": [{
+                "name": "Custom Status",
+                "type": 4,
+                "state": STATUS_ROTATION[_status_idx],
+                "emoji": None
+            }],
+            "status": "online",
+            "afk": False
+        }
+    }
+    await bot.ws.send_as_json(payload)
     _status_idx = (_status_idx + 1) % len(STATUS_ROTATION)
 
 # ── /app ──────────────────────────────────────────────────────
